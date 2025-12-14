@@ -1,10 +1,4 @@
-/* --- 1. Custom Fonts (Add to HTML Head) --- */
-/* You would need to link an 80s style font in your index.html head for the best effect. 
-   Example: <link href="https://fonts.googleapis.com/css2?family=Bungee+Outline&family=Chicle&display=swap" rel="stylesheet"> 
-   I will use a standard bold font for reliability here.
-*/
-
-/* --- 2. The Background: Geometric Pattern & Bright Colors --- */
+/* --- 1. Base & Background Styling (80s Wackiness) --- */
 body {
     margin: 0;
     /* Use a repeating, contrasting background pattern for maximalist effect */
@@ -19,9 +13,10 @@ body {
         #f90, 5% 10%
     );
     background-size: 200% 200%;
-    /* Optional: Animate the background slowly */
-    animation: background-move 10s infinite alternate;
-    font-family: 'Arial Black', sans-serif;
+    /* Animation for the background to slowly move */
+    animation: background-move 10s infinite alternate linear;
+    /* Use the linked retro font or a fallback */
+    font-family: 'Arial Black', 'Bungee Outline', sans-serif;
 }
 
 @keyframes background-move {
@@ -29,33 +24,43 @@ body {
     to {background-position: 100% 100%;}
 }
 
-/* --- 3. The Grid Items: Wavy Border & 80s Styling --- */
-
-/* Reset for the wavy border effect */
+/* --- 2. The Grid Container Layout (Desktop Default: 5 Columns) --- */
 .grid-container {
-    padding-top: 50px; /* Space for the header */
+    display: grid;
+    /* Create 5 columns, each taking an equal fraction (fr) */
+    grid-template-columns: repeat(5, 1fr); 
+    gap: 25px; /* Larger gap for dramatic spacing */
+    max-width: 1400px;
+    margin: 50px auto; 
+    padding: 0 20px;
+    padding-top: 50px; /* Space for the fixed badge */
 }
 
+/* --- 3. The Grid Items: Wavy Border & Neon Styling --- */
 .grid-item {
     /* Basic Look */
     background-color: #34495e; /* Darker base color for contrast */
     color: #fff;
     padding: 30px 20px;
+    height: 150px; /* Give them a consistent height */
     text-align: center;
     box-sizing: border-box;
-    /* Typography */
-    font-size: 2em;
-    font-weight: 900;
-    text-shadow: 4px 4px #e74c3c; /* 80s chunky text shadow */
     
-    /* Wavy Border (The Magic Part!) */
+    /* Typography */
+    font-size: 1.8em;
+    font-weight: 900;
+    line-height: 100px; /* Vertically center the text */
+    text-shadow: 4px 4px 0 #e74c3c; /* 80s chunky text shadow */
+    
+    /* Wavy Border & Neon Effect */
     border: none;
-    border-radius: 50% 10% 50% 10% / 10% 50% 10% 50%; /* Creates the wavy/squishy shape */
+    /* This creates the squishy, wavy shape */
+    border-radius: 50% 10% 50% 10% / 10% 50% 10% 50%; 
     box-shadow: 
         0 0 0 10px #f0f,  /* Neon Pink Outer Border */
         0 0 0 20px #0ff;  /* Neon Cyan Inner Border */
         
-    /* Transition for the Hover Effect */
+    /* Transition for the smooth Hover Effect */
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
@@ -63,7 +68,7 @@ body {
 .grid-item:hover {
     cursor: pointer;
     /* Zoom in slightly and rotate for a dynamic, jarring effect */
-    transform: scale(1.1) rotate(2deg);
+    transform: scale(1.05) rotate(2deg);
     /* Make the shadow more intense, like a neon glow */
     box-shadow: 
         0 0 0 10px #f0f,
@@ -72,25 +77,67 @@ body {
         0 0 40px rgba(0, 255, 255, 0.8); /* Strong neon cyan glow */
 }
 
-/* --- 5. Responsiveness (from previous code) --- */
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr); /* Simplified 5-column syntax */
-    gap: 25px; /* Larger gap for dramatic spacing */
-    max-width: 1400px;
-    margin: 50px auto; /* Adjust top margin to account for padding */
-    padding: 0 20px;
+/* --- 5. The Fixed Neon MySpace Badge --- */
+#myspace-badge {
+    /* Positioning */
+    position: fixed; /* Stays in the same spot, even when scrolling */
+    top: 20px;
+    left: 20px;
+    z-index: 1000; /* Ensures it sits above everything else */
+    
+    /* Sizing and Shape */
+    width: 100px;
+    height: 100px;
+    padding: 10px;
+    border: 5px solid #fff;
+    
+    /* Background and Color */
+    background-color: #ff0; /* Bright Neon Yellow */
+    color: #000;
+    
+    /* Typography */
+    font-family: 'Arial Black', sans-serif;
+    font-size: 1.5em;
+    font-weight: 900;
+    line-height: 80px; /* Vertically centers "MYSPACE" */
+    text-align: center;
+    
+    /* Neon Glow Effect */
+    box-shadow: 
+        0 0 10px #ff0,  
+        0 0 20px #ff0,  
+        0 0 30px #ff0,  
+        4px 4px 0 #e74c3c; /* Aggressive 80s shadow */
+    
+    /* Slight Rotation for Wackiness */
+    transform: rotate(-5deg);
+    transition: transform 0.3s ease-in-out;
 }
 
-@media (max-width: 800px) { /* Changed breakpoint to make 5-column last longer */
+#myspace-badge:hover {
+    cursor: not-allowed; 
+    transform: rotate(0deg) scale(1.05);
+}
+
+/* --- 6. Mobile Responsiveness (Media Queries) --- */
+
+/* 2 columns on tablets/small desktops */
+@media (max-width: 1200px) { 
     .grid-container {
-        grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets/small screens */
+        grid-template-columns: repeat(2, 1fr); 
         gap: 15px;
     }
 }
 
+/* 1 column on phones */
 @media (max-width: 500px) {
     .grid-container {
-        grid-template-columns: 1fr; /* 1 column on phones */
+        grid-template-columns: 1fr; 
+        padding-top: 150px; /* Adjust padding so the fixed badge doesn't cover the first item */
+    }
+    .grid-item {
+        font-size: 1.5em;
+        line-height: 80px;
+        height: 100px;
     }
 }
