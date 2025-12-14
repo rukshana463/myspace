@@ -17,25 +17,23 @@ function drawClock(clockData) {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     const radius = canvas.height / 2;
-    // Save context state to maintain center after translation
-    ctx.save(); 
+    
+    // Set the translation once outside the renderTime loop
     ctx.translate(radius, radius); 
 
     function renderTime() {
-        // Restore context state (undoes previous drawing actions but keeps translation)
-        ctx.restore();
-        ctx.save(); 
+        // Clear and redraw background/face elements
         
-        // Clear canvas by drawing a fresh circle
+        // 1. Draw Background Circle (clears previous hands)
         ctx.beginPath();
-        ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+        // Since we are translated, the center is (0, 0)
+        ctx.arc(0, 0, radius, 0, 2 * Math.PI); 
         ctx.fillStyle = "white";
         ctx.fill();
 
         // --- Reliable Time Parsing (DST-Aware, Pure JS) ---
         const now = new Date();
         
-        // Define the formatter to force 24-hour, 2-digit output
         const timeFormatter = new Intl.DateTimeFormat('en-US', {
             hour: '2-digit',
             minute: '2-digit',
@@ -46,7 +44,6 @@ function drawClock(clockData) {
 
         const timeString = timeFormatter.format(now); 
         
-        // Use a regex to safely extract the three number groups, regardless of separator
         const parts = timeString.match(/(\d{2})[^\d](\d{2})[^\d](\d{2})/);
         
         let hour = 0, minute = 0, second = 0;
@@ -56,7 +53,6 @@ function drawClock(clockData) {
             minute = parseInt(parts[2], 10);
             second = parseInt(parts[3], 10);
         } else {
-             // Fallback to local time if parsing fails (prevents blank screen)
              const localNow = new Date();
              hour = localNow.getHours();
              minute = localNow.getMinutes();
@@ -81,16 +77,16 @@ function drawClock(clockData) {
     renderTime();
 }
 
-// Function to draw the clock face and center dot (No Change)
+// Function to draw the clock face and center dot 
 function drawFace(ctx, radius) {
-    // Outer Circle
+    // Outer Circle (Draws around the translated center (0,0))
     ctx.beginPath();
     ctx.arc(0, 0, radius, 0, 2 * Math.PI);
     ctx.strokeStyle = "#3b3b3b"; 
     ctx.lineWidth = radius * 0.05;
     ctx.stroke();
 
-    // Center dot (Red)
+    // Center dot (Red, also drawn at (0, 0))
     ctx.beginPath();
     ctx.arc(0, 0, radius * 0.05, 0, 2 * Math.PI);
     ctx.fillStyle = '#ff6347'; 
@@ -118,7 +114,7 @@ function drawNumbers(ctx, radius) {
     }
 }
 
-// Function to draw the clock hands (No Change)
+// Function to draw the clock hands (No Change, as they draw from (0,0))
 function drawHand(ctx, pos, length, width, type) {
     let angle = Math.PI * (pos / 30) - (Math.PI / 2);
 
