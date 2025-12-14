@@ -1,18 +1,18 @@
 // --- 1. Global Setup: All 7 Timezones ---
 const clocks = [
-    { id: 'sf-clock', timezone: 'America/Los_Angeles', label: 'PST' },        // San Francisco, CA
-    { id: 'gnv-clock', timezone: 'America/New_York', label: 'EST' },          // Gainesville, FL
-    { id: 'shanghai-clock', timezone: 'Asia/Shanghai', label: 'CST' },        // Shanghai, China
-    { id: 'basel-clock', timezone: 'Europe/Zurich', label: 'CET' },           // Basel, Switzerland
-    { id: 'honolulu-clock', timezone: 'Pacific/Honolulu', label: 'HST' },     // Honolulu, HI
-    { id: 'paris-fr-clock', timezone: 'Europe/Paris', label: 'CET' },         // Paris, France
-    { id: 'paris-tx-clock', timezone: 'America/Chicago', label: 'CST' }       // Paris, Texas
+    { id: 'sf-clock', timezone: 'America/Los_Angeles' },        // San Francisco, CA
+    { id: 'gnv-clock', timezone: 'America/New_York' },          // Gainesville, FL
+    { id: 'shanghai-clock', timezone: 'Asia/Shanghai' },        // Shanghai, China
+    { id: 'basel-clock', timezone: 'Europe/Zurich' },           // Basel, Switzerland
+    { id: 'honolulu-clock', timezone: 'Pacific/Honolulu' },     // Honolulu, HI
+    { id: 'paris-fr-clock', timezone: 'Europe/Paris' },         // Paris, France
+    { id: 'paris-tx-clock', timezone: 'America/Chicago' }       // Paris, Texas
 ];
 
 // Draw the clock using the timezone string
 function drawClock(clockId, timezone) {
     const canvas = document.getElementById(clockId);
-    if (!canvas) return; // Exit if element not found
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
     const radius = canvas.height / 2;
     ctx.translate(radius, radius); 
@@ -25,15 +25,27 @@ function drawClock(clockId, timezone) {
         ctx.fillStyle = "white";
         ctx.fill();
 
-        // Get the current time for the specific timezone
+        // 🌟 FIX: Use Intl.DateTimeFormat for reliable time zone extraction 🌟
         const now = new Date();
-        const localizedTime = now.toLocaleString('en-US', { timeZone: timezone });
-        const time = new Date(localizedTime);
-
-        let hour = time.getHours();
-        let minute = time.getMinutes();
-        let second = time.getSeconds();
-
+        
+        const hourFormatter = new Intl.DateTimeFormat('en', {
+            hour: 'numeric',
+            hour12: false,
+            timeZone: timezone
+        });
+        const minuteFormatter = new Intl.DateTimeFormat('en', {
+            minute: 'numeric',
+            timeZone: timezone
+        });
+        const secondFormatter = new Intl.DateTimeFormat('en', {
+            second: 'numeric',
+            timeZone: timezone
+        });
+        
+        let hour = parseInt(hourFormatter.format(now));
+        let minute = parseInt(minuteFormatter.format(now));
+        let second = parseInt(secondFormatter.format(now));
+        
         // Draw Clock Face, Numbers, and Markers
         drawFace(ctx, radius);
         drawNumbers(ctx, radius);
@@ -46,23 +58,23 @@ function drawClock(clockId, timezone) {
     }, 1000); 
 }
 
-// Function to draw the clock face and center dot
+// Function to draw the clock face and center dot (No Change)
 function drawFace(ctx, radius) {
     // Outer Circle
     ctx.beginPath();
     ctx.arc(0, 0, radius, 0, 2 * Math.PI);
-    ctx.strokeStyle = "#3b3b3b"; // Dark color for the face
+    ctx.strokeStyle = "#3b3b3b"; 
     ctx.lineWidth = radius * 0.05;
     ctx.stroke();
 
     // Center dot (Red)
     ctx.beginPath();
     ctx.arc(0, 0, radius * 0.05, 0, 2 * Math.PI);
-    ctx.fillStyle = '#ff6347'; // Red dot
+    ctx.fillStyle = '#ff6347'; 
     ctx.fill();
 }
 
-// Draw Numbers on the clock face
+// Draw Numbers on the clock face (No Change)
 function drawNumbers(ctx, radius) {
     let ang;
     let num;
@@ -83,7 +95,7 @@ function drawNumbers(ctx, radius) {
     }
 }
 
-// Function to draw the clock hands
+// Function to draw the clock hands (No Change)
 function drawHand(ctx, pos, length, width, type) {
     // Convert time position to radians
     let angle = Math.PI * (pos / 30) - (Math.PI / 2);
