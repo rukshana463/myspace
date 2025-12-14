@@ -45,13 +45,13 @@ body {
     height: 150px; /* Give them a consistent height */
     text-align: center;
     box-sizing: border-box;
-    
+
     /* Typography */
     font-size: 1.8em;
     font-weight: 900;
     line-height: 100px; /* Vertically center the text */
     text-shadow: 4px 4px 0 #e74c3c; /* 80s chunky text shadow */
-    
+
     /* Wavy Border & Neon Effect */
     border: none;
     /* This creates the squishy, wavy shape */
@@ -59,7 +59,7 @@ body {
     box-shadow: 
         0 0 0 10px #f0f,  /* Neon Pink Outer Border */
         0 0 0 20px #0ff;  /* Neon Cyan Inner Border */
-        
+
     /* Transition for the smooth Hover Effect */
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
@@ -84,31 +84,31 @@ body {
     top: 20px;
     left: 20px;
     z-index: 1000; /* Ensures it sits above everything else */
-    
+
     /* Sizing and Shape */
     width: 100px;
     height: 100px;
     padding: 10px;
     border: 5px solid #fff;
-    
+
     /* Background and Color */
     background-color: #ff0; /* Bright Neon Yellow */
     color: #000;
-    
+
     /* Typography */
     font-family: 'Arial Black', sans-serif;
     font-size: 1.5em;
     font-weight: 900;
     line-height: 80px; /* Vertically centers "MYSPACE" */
     text-align: center;
-    
+
     /* Neon Glow Effect */
     box-shadow: 
         0 0 10px #ff0,  
         0 0 20px #ff0,  
         0 0 30px #ff0,  
         4px 4px 0 #e74c3c; /* Aggressive 80s shadow */
-    
+
     /* Slight Rotation for Wackiness */
     transform: rotate(-5deg);
     transition: transform 0.3s ease-in-out;
