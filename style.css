@@ -1,115 +1,77 @@
-/* --- 1. Base & Background Styling (80s Wackiness) --- */
+/* --- 1. Base & Background Styling (Updated Pink) --- */
 body {
     margin: 0;
-    /* Use a repeating, contrasting background pattern for maximalist effect */
-    background-image: repeating-linear-gradient(
-        45deg, 
-        #f06, 0 5%, 
-        #0cf, 5% 10%
-    ), 
-    repeating-linear-gradient(
-        -45deg, 
-        #90f, 0 5%, 
-        #f90, 5% 10%
-    );
-    background-size: 200% 200%;
-    /* Animation for the background to slowly move */
-    animation: background-move 10s infinite alternate linear;
-    /* Use the linked retro font or a fallback */
+    /* Changed to Baby Pink */
+    background-color: #FFB6C1; 
+    /* Removed previous background-image code */
+    
     font-family: 'Arial Black', 'Bungee Outline', sans-serif;
-}
-
-@keyframes background-move {
-    from {background-position: 0% 0%;}
-    to {background-position: 100% 100%;}
 }
 
 /* --- 2. The Grid Container Layout (Desktop Default: 5 Columns) --- */
 .grid-container {
     display: grid;
-    /* Create 5 columns, each taking an equal fraction (fr) */
     grid-template-columns: repeat(5, 1fr); 
-    gap: 25px; /* Larger gap for dramatic spacing */
+    gap: 25px; 
     max-width: 1400px;
     margin: 50px auto; 
     padding: 0 20px;
-    padding-top: 50px; /* Space for the fixed badge */
+    padding-top: 50px; 
 }
 
-/* --- 3. The Grid Items: Wavy Border & Neon Styling --- */
+/* --- 3. The Grid Items: Wavy Border & Neon Styling (No Change) --- */
 .grid-item {
-    /* Basic Look */
-    background-color: #34495e; /* Darker base color for contrast */
+    background-color: #34495e; 
     color: #fff;
     padding: 30px 20px;
-    height: 150px; /* Give them a consistent height */
+    height: 150px; 
     text-align: center;
     box-sizing: border-box;
-
-    /* Typography */
     font-size: 1.8em;
     font-weight: 900;
-    line-height: 100px; /* Vertically center the text */
-    text-shadow: 4px 4px 0 #e74c3c; /* 80s chunky text shadow */
-
-    /* Wavy Border & Neon Effect */
+    line-height: 100px; 
+    text-shadow: 4px 4px 0 #e74c3c; 
     border: none;
-    /* This creates the squishy, wavy shape */
     border-radius: 50% 10% 50% 10% / 10% 50% 10% 50%; 
     box-shadow: 
-        0 0 0 10px #f0f,  /* Neon Pink Outer Border */
-        0 0 0 20px #0ff;  /* Neon Cyan Inner Border */
-
-    /* Transition for the smooth Hover Effect */
+        0 0 0 10px #f0f,  
+        0 0 0 20px #0ff;  
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-/* --- 4. The Hover Effect: Zoom, Rotate, and Glow --- */
+/* --- 4. The Hover Effect: (No Change) --- */
 .grid-item:hover {
     cursor: pointer;
-    /* Zoom in slightly and rotate for a dynamic, jarring effect */
     transform: scale(1.05) rotate(2deg);
-    /* Make the shadow more intense, like a neon glow */
     box-shadow: 
         0 0 0 10px #f0f,
         0 0 0 20px #0ff,
-        0 0 40px rgba(255, 0, 255, 0.8), /* Strong neon pink glow */
-        0 0 40px rgba(0, 255, 255, 0.8); /* Strong neon cyan glow */
+        0 0 40px rgba(255, 0, 255, 0.8), 
+        0 0 40px rgba(0, 255, 255, 0.8); 
 }
 
-/* --- 5. The Fixed Neon MySpace Badge --- */
+/* --- 5. The Fixed Neon MySpace Badge (No Change) --- */
 #myspace-badge {
-    /* Positioning */
-    position: fixed; /* Stays in the same spot, even when scrolling */
+    position: fixed; 
     top: 20px;
     left: 20px;
-    z-index: 1000; /* Ensures it sits above everything else */
-
-    /* Sizing and Shape */
+    z-index: 1000; 
     width: 100px;
     height: 100px;
     padding: 10px;
     border: 5px solid #fff;
-
-    /* Background and Color */
-    background-color: #ff0; /* Bright Neon Yellow */
+    background-color: #ff0; 
     color: #000;
-
-    /* Typography */
     font-family: 'Arial Black', sans-serif;
     font-size: 1.5em;
     font-weight: 900;
-    line-height: 80px; /* Vertically centers "MYSPACE" */
+    line-height: 80px; 
     text-align: center;
-
-    /* Neon Glow Effect */
     box-shadow: 
         0 0 10px #ff0,  
         0 0 20px #ff0,  
         0 0 30px #ff0,  
-        4px 4px 0 #e74c3c; /* Aggressive 80s shadow */
-
-    /* Slight Rotation for Wackiness */
+        4px 4px 0 #e74c3c; 
     transform: rotate(-5deg);
     transition: transform 0.3s ease-in-out;
 }
@@ -119,21 +81,54 @@ body {
     transform: rotate(0deg) scale(1.05);
 }
 
-/* --- 6. Mobile Responsiveness (Media Queries) --- */
+/* --- 6. NEW: Clock Styling --- */
+.clock-display-container {
+    display: flex; /* Arranges clocks side-by-side */
+    justify-content: center;
+    gap: 100px;
+    padding: 40px;
+    margin-top: 50px;
+    /* A subtle, contrasting background for the clock area */
+    background-color: rgba(255, 255, 255, 0.7); 
+    border-top: 10px dashed #f0f; /* Neon dashed line separator */
+}
 
-/* 2 columns on tablets/small desktops */
-@media (max-width: 1200px) { 
-    .grid-container {
-        grid-template-columns: repeat(2, 1fr); 
-        gap: 15px;
+.clock-wrapper {
+    text-align: center;
+    color: #34495e;
+}
+
+.clock-wrapper h3 {
+    text-shadow: 2px 2px 0 #f0f;
+}
+
+/* Clock Canvas: Retro Neon Look */
+canvas {
+    border: 5px solid #0ff; /* Neon Cyan Clock Frame */
+    border-radius: 50%;
+    box-shadow: 0 0 10px #0ff, 0 0 20px #0ff; /* Neon Glow */
+}
+
+
+/* --- 7. Mobile Responsiveness (Updated) --- */
+/* The clock container should stack on smaller screens */
+@media (max-width: 700px) {
+    .clock-display-container {
+        flex-direction: column; 
+        gap: 40px;
     }
 }
 
-/* 1 column on phones */
+@media (max-width: 1200px) { 
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr); 
+    }
+}
+
 @media (max-width: 500px) {
     .grid-container {
         grid-template-columns: 1fr; 
-        padding-top: 150px; /* Adjust padding so the fixed badge doesn't cover the first item */
+        padding-top: 150px; 
     }
     .grid-item {
         font-size: 1.5em;
