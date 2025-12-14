@@ -1,6 +1,5 @@
 // --- 1. Global Setup: All 7 Locations with Fixed UTC Offsets ---
-// Note: Offset is in hours, relative to UTC (e.g., -8 for San Francisco).
-// These offsets are correct for Standard Time (December).
+// These offsets are correct for Standard Time (UTC).
 const clocks = [
     { id: 'sf-clock', offset: -8 },      // San Francisco, CA (UTC-8)
     { id: 'gnv-clock', offset: -5 },     // Gainesville, FL (UTC-5)
