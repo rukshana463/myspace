@@ -1,130 +1,42 @@
-/* --- 1. Base & Background Styling (Peanuts Yellow) --- */
-body {
-    margin: 0;
-    /* Changed to Soft Yellow/Cream */
-    background-color: #FFFACD; 
-    font-family: 'Arial Black', 'Bungee Outline', sans-serif;
-}
-
-/* --- 2. The Grid Container Layout --- */
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr); 
-    gap: 25px; 
-    max-width: 1400px;
-    margin: 50px auto; 
-    padding: 0 20px;
-    padding-top: 50px; 
-}
-
-/* --- 3. The Grid Items: Wavy Border & Peanuts Look --- */
-.grid-item {
-    background-color: #f7e6e5; 
-    color: #3b3b3b; 
-    padding: 10px; 
-    height: 180px; 
-    text-align: center;
-    box-sizing: border-box;
-    font-size: 1.2em; 
-    font-weight: 900;
-    line-height: 1.2;
-    text-shadow: 2px 2px 0 #fff; 
-    border: none;
-    border-radius: 50% 10% 50% 10% / 10% 50% 10% 50%; 
-    box-shadow: 
-        0 0 0 5px #000; 
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-}
-
-/* Styling for the Peanuts images */
-.peanuts-img {
-    width: 80%;
-    max-height: 70%;
-    object-fit: contain;
-    margin-bottom: 5px;
-    border-radius: 50%;
-}
-
-/* --- 4. The Hover Effect: (Muted) --- */
-.grid-item:hover {
-    cursor: pointer;
-    transform: scale(1.05) rotate(0deg); 
-    box-shadow: 
-        0 0 0 5px #ff6347, 
-        0 0 20px rgba(255, 99, 71, 0.5); 
-}
-
-/* --- 5. UPDATED: Single-Element Heart MYSPACE Badge Styling --- */
+/* --- 5. UPDATED: HTML Symbol Heart Styling --- */
 #myspace-badge {
     position: fixed; 
     top: 20px;
     left: 20px;
     z-index: 1000; 
-    width: 100px; /* Base size of the square */
+    width: 150px; /* Increased size to fit the heart and text */
     height: 100px;
+    background-color: transparent; 
+    border: none;
+    padding: 0;
     
-    /* Text Styling */
-    color: #fff;
+    display: flex; /* Use flexbox to align heart and text */
+    align-items: center;
+    justify-content: flex-start;
+    
     font-family: 'Arial Black', sans-serif;
+    color: #fff;
     font-size: 1.5em;
-    font-weight: 900;
-    text-align: center;
-    line-height: 100px;
+}
+
+.heart-symbol {
+    font-size: 80px; /* Make the symbol large */
+    color: rgba(255, 0, 0, 0.5); /* 50% opaque Red */
+    line-height: 80px;
+    margin-right: 5px;
     
-    /* Crucial: Rotate and position the entire box to form the base of the heart */
-    transform: rotate(-45deg);
-    transform-origin: 50% 50%; /* Center the rotation */
-    
-    /* Background and Shadow for the diamond base */
-    background-color: rgba(255, 0, 0, 0.5); /* 50% opaque Red */
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
-    
-    /* Ensures text is positioned correctly despite rotation */
-    position: relative; 
+    /* Add the glow effect */
+    text-shadow: 
+        0 0 5px rgba(255, 0, 0, 0.8),
+        0 0 15px rgba(255, 0, 0, 0.6),
+        0 0 25px rgba(255, 0, 0, 0.4);
 }
 
-/* Heart Humps: Create the two circular sections on the rotated base */
-#myspace-badge:before,
-#myspace-badge:after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    
-    /* Background and Shape */
-    background-color: rgba(255, 0, 0, 0.5); /* 50% opaque Red */
-    border-radius: 50%; /* Circles */
+.badge-text {
+    font-size: 1.5em;
+    color: #3b3b3b; /* Dark text next to the heart */
 }
 
-/* Position Top-Left Hump */
-#myspace-badge:before {
-    top: -50%;
-    left: 0;
+#myspace-badge:hover {
+    cursor: not-allowed; 
 }
-
-/* Position Top-Right Hump */
-#myspace-badge:after {
-    top: 0;
-    left: 50%;
-}
-
-/* Fix text rotation: Rotate text back 45 degrees so it reads correctly */
-#myspace-badge > * { /* Target the text inside the badge */
-    display: inline-block;
-    transform: rotate(45deg); 
-    position: relative;
-    z-index: 10;
-}
-
-/* --- 6. Clock Styling (Remains) --- */
-.clock-display-container {
-    display: flex; 
-    justify-content: center;
-    flex-wrap: wrap; 
-    gap: 30px;
-    padding: 40px 20px;
-    margin-top: 50px;
-    background-color: rgba(255, 255, 255, 0.9); 
-    border-top: 5px solid #ccc; 
-}
-/* ... remaining CSS styles for clocks and media queries ... */
