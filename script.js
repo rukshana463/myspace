@@ -1,138 +1,111 @@
-/* --- 1. Base & Background Styling (Peanuts Yellow) --- */
-body {
-    margin: 0;
-    /* Changed to Soft Yellow/Cream */
-    background-color: #FFFACD; 
-    font-family: 'Arial Black', 'Bungee Outline', sans-serif;
-}
+// --- 1. Global Setup: All 7 Timezones ---
+const clocks = [
+    { id: 'sf-clock', timezone: 'America/Los_Angeles', label: 'PST' },        // San Francisco, CA
+    { id: 'gnv-clock', timezone: 'America/New_York', label: 'EST' },          // Gainesville, FL
+    { id: 'shanghai-clock', timezone: 'Asia/Shanghai', label: 'CST' },        // Shanghai, China
+    { id: 'basel-clock', timezone: 'Europe/Zurich', label: 'CET' },           // Basel, Switzerland
+    { id: 'honolulu-clock', timezone: 'Pacific/Honolulu', label: 'HST' },     // Honolulu, HI
+    { id: 'paris-fr-clock', timezone: 'Europe/Paris', label: 'CET' },         // Paris, France
+    { id: 'paris-tx-clock', timezone: 'America/Chicago', label: 'CST' }       // Paris, Texas
+];
 
-/* --- 2. The Grid Container Layout --- */
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr); 
-    gap: 25px; 
-    max-width: 1400px;
-    margin: 50px auto; 
-    padding: 0 20px;
-    padding-top: 50px; 
-}
+// Draw the clock using the timezone string
+function drawClock(clockId, timezone) {
+    const canvas = document.getElementById(clockId);
+    if (!canvas) return; // Exit if element not found
+    const ctx = canvas.getContext('2d');
+    const radius = canvas.height / 2;
+    ctx.translate(radius, radius); 
 
-/* --- 3. The Grid Items: Wavy Border & Peanuts Look --- */
-.grid-item {
-    /* Updated for a less harsh look */
-    background-color: #f7e6e5; /* A light, muted pink */
-    color: #3b3b3b; /* Darker text */
-    padding: 10px; /* Reduced padding for the image */
-    height: 180px; 
-    text-align: center;
-    box-sizing: border-box;
-    
-    /* Typography */
-    font-size: 1.2em; /* Smaller font for image space */
-    font-weight: 900;
-    line-height: 1.2;
-    text-shadow: 2px 2px 0 #fff; /* White outline shadow */
-    
-    /* Wavy Border (Remains for fun shape) */
-    border: none;
-    border-radius: 50% 10% 50% 10% / 10% 50% 10% 50%; 
-    box-shadow: 
-        0 0 0 5px #000; /* Simple black border */
+    // Use a variable to store the interval ID
+    const intervalId = setInterval(() => {
+        // Clear canvas
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+        ctx.fillStyle = "white";
+        ctx.fill();
+
+        // Get the current time for the specific timezone
+        const now = new Date();
+        const localizedTime = now.toLocaleString('en-US', { timeZone: timezone });
+        const time = new Date(localizedTime);
+
+        let hour = time.getHours();
+        let minute = time.getMinutes();
+        let second = time.getSeconds();
+
+        // Draw Clock Face, Numbers, and Markers
+        drawFace(ctx, radius);
+        drawNumbers(ctx, radius);
         
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        // Draw Hands
+        drawHand(ctx, hour * 5 + (minute / 12) * 5, radius * 0.5, radius * 0.07, 'hour'); 
+        drawHand(ctx, minute, radius * 0.8, radius * 0.07, 'minute'); 
+        drawHand(ctx, second, radius * 0.9, radius * 0.02, 'second'); 
+        
+    }, 1000); 
 }
 
-/* New: Styling for the Peanuts images */
-.peanuts-img {
-    width: 80%;
-    max-height: 70%;
-    object-fit: contain;
-    margin-bottom: 5px;
-    border-radius: 50%;
+// Function to draw the clock face and center dot
+function drawFace(ctx, radius) {
+    // Outer Circle
+    ctx.beginPath();
+    ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+    ctx.strokeStyle = "#3b3b3b"; // Dark color for the face
+    ctx.lineWidth = radius * 0.05;
+    ctx.stroke();
+
+    // Center dot (Red)
+    ctx.beginPath();
+    ctx.arc(0, 0, radius * 0.05, 0, 2 * Math.PI);
+    ctx.fillStyle = '#ff6347'; // Red dot
+    ctx.fill();
 }
 
-/* --- 4. The Hover Effect: (Muted) --- */
-.grid-item:hover {
-    cursor: pointer;
-    transform: scale(1.05) rotate(0deg); /* No rotation, more gentle */
-    box-shadow: 
-        0 0 0 5px #ff6347, /* Tomato red hover border */
-        0 0 20px rgba(255, 99, 71, 0.5); /* Soft glow */
-}
+// NEW FUNCTION: Draw Numbers on the clock face
+function drawNumbers(ctx, radius) {
+    let ang;
+    let num;
+    ctx.font = radius * 0.15 + "px Arial";
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#3b3b3b";
 
-/* --- 5. The Fixed Neon MySpace Badge (Remains) --- */
-#myspace-badge {
-    position: fixed; top: 20px; left: 20px; z-index: 1000; 
-    width: 100px; height: 100px; padding: 10px; border: 5px solid #fff;
-    background-color: #ff0; color: #000; font-family: 'Arial Black', sans-serif;
-    font-size: 1.5em; font-weight: 900; line-height: 80px; text-align: center;
-    box-shadow: 0 0 10px #ff0, 0 0 20px #ff0, 0 0 30px #ff0, 4px 4px 0 #e74c3c; 
-    transform: rotate(-5deg); transition: transform 0.3s ease-in-out;
-}
-
-#myspace-badge:hover {
-    cursor: not-allowed; 
-    transform: rotate(0deg) scale(1.05);
-}
-
-/* --- 6. Clock Styling (Updated for cleaner look) --- */
-.clock-display-container {
-    display: flex; 
-    justify-content: center;
-    flex-wrap: wrap; /* Allows clocks to wrap to the next line */
-    gap: 30px;
-    padding: 40px 20px;
-    margin-top: 50px;
-    background-color: rgba(255, 255, 255, 0.9); 
-    border-top: 5px solid #ccc; /* Soft border */
-}
-
-.clock-wrapper {
-    text-align: center;
-    color: #3b3b3b;
-    min-width: 150px;
-}
-
-.clock-wrapper h3 {
-    text-shadow: none;
-    font-size: 0.9em;
-    margin-bottom: 10px;
-}
-
-/* Clock Canvas: Cleaner Look */
-canvas {
-    border: 3px solid #3b3b3b; /* Simple dark border */
-    border-radius: 50%;
-    box-shadow: none; /* Removed neon glow */
-}
-
-
-/* --- 7. Mobile Responsiveness --- */
-@media (max-width: 1200px) { 
-    .grid-container {
-        grid-template-columns: repeat(3, 1fr); 
+    for (num = 1; num < 13; num++) {
+        ang = num * Math.PI / 6;
+        ctx.rotate(ang);
+        ctx.translate(0, -radius * 0.85);
+        ctx.rotate(-ang);
+        ctx.fillText(num.toString(), 0, 0);
+        ctx.rotate(ang);
+        ctx.translate(0, radius * 0.85);
+        ctx.rotate(-ang);
     }
 }
 
-@media (max-width: 768px) { 
-    .grid-container {
-        grid-template-columns: repeat(2, 1fr); 
+// Function to draw the clock hands
+function drawHand(ctx, pos, length, width, type) {
+    // Convert time position to radians
+    let angle = Math.PI * (pos / 30) - (Math.PI / 2);
+
+    ctx.beginPath();
+    ctx.lineWidth = width;
+    ctx.lineCap = "round";
+
+    if (type === 'second') {
+        ctx.strokeStyle = '#ff6347'; // Red for Second Hand
+    } else {
+        ctx.strokeStyle = '#3b3b3b'; // Dark color for Hour/Minute
     }
-    .clock-display-container {
-        gap: 20px;
-    }
+
+    ctx.moveTo(0, 0);
+    ctx.rotate(angle);
+    ctx.lineTo(0, -length);
+    ctx.stroke();
+    ctx.rotate(-angle); // Rotate back
 }
 
-@media (max-width: 500px) {
-    .grid-container {
-        grid-template-columns: 1fr; 
-        padding-top: 150px; 
-    }
-    .grid-item {
-        font-size: 1.2em;
-        height: 150px;
-    }
-    .peanuts-img {
-        max-height: 60%;
-    }
-}
+// --- 4. Initialization ---
+clocks.forEach(clock => {
+    drawClock(clock.id, clock.timezone);
+});
