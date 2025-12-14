@@ -1,40 +1,17 @@
-// --- 1. Global Setup: All 7 Timezones with Fixed UTC Offsets ---
-// Note: Offset is in hours, relative to UTC (e.g., -8 for San Francisco)
+// --- 1. Global Setup: All 7 Timezones using IANA identifiers ---
 const clocks = [
-    { id: 'sf-clock', offset: -8 },      // San Francisco, CA (UTC-8)
-    { id: 'gnv-clock', offset: -5 },     // Gainesville, FL (UTC-5)
-    { id: 'shanghai-clock', offset: 8 }, // Shanghai, China (UTC+8)
-    { id: 'basel-clock', offset: 1 },    // Basel, Switzerland (UTC+1)
-    { id: 'honolulu-clock', offset: -10 }, // Honolulu, HI (UTC-10)
-    { id: 'paris-fr-clock', offset: 1 }, // Paris, France (UTC+1)
-    { id: 'paris-tx-clock', offset: -6 } // Paris, Texas (UTC-6)
+    { id: 'sf-clock', timezone: 'America/Los_Angeles' },        // San Francisco, CA
+    { id: 'gnv-clock', timezone: 'America/New_York' },          // Gainesville, FL
+    { id: 'shanghai-clock', timezone: 'Asia/Shanghai' },        // Shanghai, China
+    { id: 'basel-clock', timezone: 'Europe/Zurich' },           // Basel, Switzerland (Zurich is the official zone)
+    { id: 'honolulu-clock', timezone: 'Pacific/Honolulu' },     // Honolulu, HI
+    { id: 'paris-fr-clock', timezone: 'Europe/Paris' },         // Paris, France
+    { id: 'paris-tx-clock', timezone: 'America/Chicago' }       // Paris, Texas (America/Chicago covers Central Time)
 ];
 
-/**
- * Gets the current time components (H, M, S) for a fixed UTC offset.
- */
-function getTimeComponents(offset) {
-    const now = new Date();
-    
-    // Get the current UTC time (milliseconds)
-    const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000); 
-
-    // Create a new date object for the target location by applying the offset
-    // Offset is in hours, converted to milliseconds (offset * 3600000)
-    const targetTimeMs = utcTime + (offset * 3600000);
-    const targetDate = new Date(targetTimeMs);
-    
-    return {
-        hour: targetDate.getHours(),
-        minute: targetDate.getMinutes(),
-        second: targetDate.getSeconds()
-    };
-}
-
-
-// Draw the clock using the timezone data
+// Draw the clock using the timezone string
 function drawClock(clockData) {
-    const { id, offset } = clockData;
+    const { id, timezone } = clockData;
     const canvas = document.getElementById(id);
     
     if (!canvas) return;
@@ -49,27 +26,56 @@ function drawClock(clockData) {
         ctx.fillStyle = "white";
         ctx.fill();
 
-        // Get reliable time components via fixed offset
-        const time = getTimeComponents(offset);
+        // Use Intl.DateTimeFormat to reliably get H, M, S for the specified time zone
+        const now = new Date();
         
+        // Use toLocaleTimeString for a single reliable string that includes DST adjustment
+        const timeOptions = {
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+            hour12: false, // Ensure 24-hour format
+            timeZone: timezone
+        };
+        
+        const timeString = now.toLocaleTimeString('en-US', timeOptions);
+        
+        // Safely parse the time string (e.g., "14:30:15")
+        const [hourStr, minuteStr, secondStr] = timeString.split(':');
+        
+        const hour = parseInt(hourStr, 10);
+        const minute = parseInt(minuteStr, 10);
+        const second = parseInt(secondStr, 10);
+
+        // Check if parsing failed (resulting in NaN). If so, stop rendering.
+        if (isNaN(hour) || isNaN(minute) || isNaN(second)) {
+            console.error(`Failed to parse time for ${timezone}. Result: ${timeString}`);
+            // Draw face but skip hands to prevent errors
+            drawFace(ctx, radius);
+            drawNumbers(ctx, radius);
+            requestAnimationFrame(renderTime);
+            return; 
+        }
+
         // Draw Clock Face, Numbers, and Markers (functions remain unchanged)
         drawFace(ctx, radius);
         drawNumbers(ctx, radius);
         
-        // Draw Hands
-        // Hour Position: (Hour % 12) * 5 + (Minute / 12) * 5
-        const hourPos = (time.hour % 12) * 5 + (time.minute / 12);
+        // Draw Hands: 
+        // Hour Position Calculation: (Hour % 12) * 5 + (Minute / 12) * 5
+        const hourPos = (hour % 12) * 5 + (minute / 12);
 
         drawHand(ctx, hourPos, radius * 0.5, radius * 0.07, 'hour'); 
-        drawHand(ctx, time.minute, radius * 0.8, radius * 0.07, 'minute'); 
-        drawHand(ctx, time.second, radius * 0.9, radius * 0.02, 'second'); 
+        drawHand(ctx, minute, radius * 0.8, radius * 0.07, 'minute'); 
+        drawHand(ctx, second, radius * 0.9, radius * 0.02, 'second'); 
         
         requestAnimationFrame(renderTime);
     }
     
-    // Start the clock updates
     renderTime();
 }
+
+// (The rest of the helper functions: drawFace, drawNumbers, drawHand are unchanged)
 
 // Function to draw the clock face and center dot (No Change)
 function drawFace(ctx, radius) {
@@ -128,6 +134,7 @@ function drawHand(ctx, pos, length, width, type) {
     ctx.stroke();
     ctx.rotate(-angle); 
 }
+
 
 // --- 4. Initialization ---
 clocks.forEach(clock => {
