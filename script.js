@@ -62,7 +62,7 @@ function drawFace(ctx, radius) {
     ctx.fill();
 }
 
-// NEW FUNCTION: Draw Numbers on the clock face
+// Draw Numbers on the clock face
 function drawNumbers(ctx, radius) {
     let ang;
     let num;
