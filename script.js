@@ -9,53 +9,73 @@ const clocks = [
     { id: 'paris-tx-clock', timezone: 'America/Chicago' }       // Paris, Texas
 ];
 
+/**
+ * Gets the current time components (H, M, S) for a given timezone.
+ * Returns an object: {hour: number, minute: number, second: number}
+ */
+function getTimeComponents(timezone) {
+    const now = new Date();
+    
+    // Create a formatter that returns the date/time string with the target timezone
+    const timeFormatter = new Intl.DateTimeFormat('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false, // Force 24-hour output for easy parsing
+        timeZone: timezone
+    });
+
+    // Example output for London: "22:15:30"
+    const timeString = timeFormatter.format(now); 
+    const [hourStr, minuteStr, secondStr] = timeString.split(':');
+    
+    return {
+        hour: parseInt(hourStr, 10),
+        minute: parseInt(minuteStr, 10),
+        second: parseInt(secondStr, 10)
+    };
+}
+
+
 // Draw the clock using the timezone string
-function drawClock(clockId, timezone) {
-    const canvas = document.getElementById(clockId);
+function drawClock(clockData) {
+    const { id, timezone } = clockData;
+    const canvas = document.getElementById(id);
+    
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     const radius = canvas.height / 2;
     ctx.translate(radius, radius); 
 
-    // Use a variable to store the interval ID
-    const intervalId = setInterval(() => {
+    // Use a reliable interval function that calls itself immediately 
+    // to avoid the initial 1-second delay.
+    function renderTime() {
         // Clear canvas
         ctx.beginPath();
         ctx.arc(0, 0, radius, 0, 2 * Math.PI);
         ctx.fillStyle = "white";
         ctx.fill();
 
-        // 🌟 FIX: Use Intl.DateTimeFormat for reliable time zone extraction 🌟
-        const now = new Date();
-        
-        const hourFormatter = new Intl.DateTimeFormat('en', {
-            hour: 'numeric',
-            hour12: false,
-            timeZone: timezone
-        });
-        const minuteFormatter = new Intl.DateTimeFormat('en', {
-            minute: 'numeric',
-            timeZone: timezone
-        });
-        const secondFormatter = new Intl.DateTimeFormat('en', {
-            second: 'numeric',
-            timeZone: timezone
-        });
-        
-        let hour = parseInt(hourFormatter.format(now));
-        let minute = parseInt(minuteFormatter.format(now));
-        let second = parseInt(secondFormatter.format(now));
+        // Get reliable time components
+        const time = getTimeComponents(timezone);
         
         // Draw Clock Face, Numbers, and Markers
         drawFace(ctx, radius);
         drawNumbers(ctx, radius);
         
-        // Draw Hands
-        drawHand(ctx, hour * 5 + (minute / 12) * 5, radius * 0.5, radius * 0.07, 'hour'); 
-        drawHand(ctx, minute, radius * 0.8, radius * 0.07, 'minute'); 
-        drawHand(ctx, second, radius * 0.9, radius * 0.02, 'second'); 
+        // Draw Hands: Time is now guaranteed to be a number (0-23, 0-59, 0-59)
+        // Hour Position Calculation: (Hour * 5) + (Minute / 12) * 5
+        const hourPos = (time.hour % 12) * 5 + (time.minute / 12);
+
+        drawHand(ctx, hourPos, radius * 0.5, radius * 0.07, 'hour'); 
+        drawHand(ctx, time.minute, radius * 0.8, radius * 0.07, 'minute'); 
+        drawHand(ctx, time.second, radius * 0.9, radius * 0.02, 'second'); 
         
-    }, 1000); 
+        requestAnimationFrame(renderTime);
+    }
+    
+    // Start the clock updates
+    renderTime();
 }
 
 // Function to draw the clock face and center dot (No Change)
@@ -98,6 +118,7 @@ function drawNumbers(ctx, radius) {
 // Function to draw the clock hands (No Change)
 function drawHand(ctx, pos, length, width, type) {
     // Convert time position to radians
+    // 60 minutes/seconds or 12 hours * 5 = 60 steps around the clock face
     let angle = Math.PI * (pos / 30) - (Math.PI / 2);
 
     ctx.beginPath();
@@ -119,5 +140,5 @@ function drawHand(ctx, pos, length, width, type) {
 
 // --- 4. Initialization ---
 clocks.forEach(clock => {
-    drawClock(clock.id, clock.timezone);
+    drawClock(clock);
 });
