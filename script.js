@@ -17,7 +17,7 @@ function drawClock(clockData) {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     const radius = canvas.height / 2;
-    // Save state before translation, so canvas is properly centered
+    // Save context state to maintain center after translation
     ctx.save(); 
     ctx.translate(radius, radius); 
 
@@ -32,7 +32,7 @@ function drawClock(clockData) {
         ctx.fillStyle = "white";
         ctx.fill();
 
-        // --- Reliable Time Parsing (DST-Aware) ---
+        // --- Reliable Time Parsing (DST-Aware, Pure JS) ---
         const now = new Date();
         
         // Define the formatter to force 24-hour, 2-digit output
@@ -46,7 +46,7 @@ function drawClock(clockData) {
 
         const timeString = timeFormatter.format(now); 
         
-        // Use a space to split the parts, as some environments add hidden characters around the colon
+        // Use a regex to safely extract the three number groups, regardless of separator
         const parts = timeString.match(/(\d{2})[^\d](\d{2})[^\d](\d{2})/);
         
         let hour = 0, minute = 0, second = 0;
