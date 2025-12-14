@@ -127,3 +127,44 @@ body {
 }
 
 .clock-wrapper h3 {
+    text-shadow: none;
+    font-size: 0.9em;
+    margin-bottom: 10px;
+}
+
+canvas {
+    border: 3px solid #3b3b3b; 
+    border-radius: 50%;
+    box-shadow: none; 
+}
+
+
+/* --- 7. Mobile Responsiveness --- */
+@media (max-width: 1200px) { 
+    .grid-container {
+        grid-template-columns: repeat(3, 1fr); 
+    }
+}
+
+@media (max-width: 768px) { 
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr); 
+    }
+    .clock-display-container {
+        gap: 20px;
+    }
+}
+
+@media (max-width: 500px) {
+    .grid-container {
+        grid-template-columns: 1fr; 
+        padding-top: 150px; 
+    }
+    .grid-item {
+        font-size: 1.2em;
+        height: 150px;
+    }
+    .peanuts-img {
+        max-height: 60%;
+    }
+}
