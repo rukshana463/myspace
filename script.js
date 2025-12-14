@@ -1,40 +1,20 @@
-// --- 1. Global Setup: All 7 Timezones with IANA identifiers and Fixed UTC Offsets ---
-// offset: UTC hour offset (Standard Time). Used for fallback calculation.
+// --- 1. Global Setup: All 7 Locations with Offset relative to San Francisco (America/Los_Angeles) ---
+// Since SF is UTC-8 (PST), the offset is (Target UTC Offset) - (-8).
+// For Paris, TX (CST, UTC-6): -6 - (-8) = +2 hours ahead of SF.
 const clocks = [
-    { id: 'sf-clock', timezone: 'America/Los_Angeles', offset: -8 },        // San Francisco, CA (UTC-8)
-    { id: 'gnv-clock', timezone: 'America/New_York', offset: -5 },          // Gainesville, FL (UTC-5)
-    { id: 'shanghai-clock', timezone: 'Asia/Shanghai', offset: 8 },        // Shanghai, China (UTC+8)
-    { id: 'basel-clock', timezone: 'Europe/Zurich', offset: 1 },           // Basel, Switzerland (UTC+1)
-    { id: 'honolulu-clock', timezone: 'Pacific/Honolulu', offset: -10 },     // Honolulu, HI (UTC-10)
-    { id: 'paris-fr-clock', timezone: 'Europe/Paris', offset: 1 },         // Paris, France (UTC+1)
-    { id: 'paris-tx-clock', timezone: 'America/Chicago', offset: -6 }       // Paris, Texas (UTC-6)
+    { id: 'sf-clock', hourDiff: 0 },         // San Francisco, CA (Reference point)
+    { id: 'gnv-clock', hourDiff: 3 },        // Gainesville, FL (EST is 3 hours ahead of PST)
+    { id: 'shanghai-clock', hourDiff: 16 },  // Shanghai, China (PST is UTC-8; CST is UTC+8. Difference is 16 hours)
+    { id: 'basel-clock', hourDiff: 9 },      // Basel, Switzerland (CET is 9 hours ahead of PST)
+    { id: 'honolulu-clock', hourDiff: -2 },  // Honolulu, HI (HST is 2 hours behind PST)
+    { id: 'paris-fr-clock', hourDiff: 9 },   // Paris, France (CET is 9 hours ahead of PST)
+    { id: 'paris-tx-clock', hourDiff: 2 }    // Paris, Texas (CST is 2 hours ahead of PST)
 ];
 
 
-/**
- * Fallback: Calculates time using a fixed UTC offset (in hours).
- * This ignores DST but is a reliable last resort if IANA strings fail.
- */
-function getFallbackTime(offset) {
-    const now = new Date();
-    // Get the current UTC time in milliseconds
-    const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000); 
-
-    // Apply the fixed offset (offset * 3600000 ms per hour)
-    const targetTimeMs = utcTime + (offset * 3600000);
-    const targetDate = new Date(targetTimeMs);
-    
-    return {
-        hour: targetDate.getHours(),
-        minute: targetDate.getMinutes(),
-        second: targetDate.getSeconds()
-    };
-}
-
-
-// Draw the clock using the timezone string
+// Draw the clock using the simple arithmetic difference from local time
 function drawClock(clockData) {
-    const { id, timezone, offset } = clockData;
+    const { id, hourDiff } = clockData;
     const canvas = document.getElementById(id);
     
     if (!canvas) return;
@@ -52,39 +32,17 @@ function drawClock(clockData) {
         ctx.fillStyle = "white";
         ctx.fill();
 
-        let hour = 0, minute = 0, second = 0;
-        let timeCorrected = false;
-
-        // --- ATTEMPT 1: Primary DST-Aware Method (Intl.DateTimeFormat) ---
-        try {
-            const now = new Date();
-            const timeFormatter = new Intl.DateTimeFormat('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false, 
-                timeZone: timezone
-            });
-
-            const timeString = timeFormatter.format(now); 
-            const parts = timeString.match(/(\d{2})[^\d](\d{2})[^\d](\d{2})/);
-            
-            if (parts && parts.length === 4) {
-                hour = parseInt(parts[1], 10);
-                minute = parseInt(parts[2], 10);
-                second = parseInt(parts[3], 10);
-                timeCorrected = true;
-            }
-        } catch (e) {
-            console.error(`Error in primary time method for ${timezone}:`, e);
-        }
+        // --- FINAL FIX: Arithmetic Difference from Local Time ---
+        const now = new Date();
         
-        // --- ATTEMPT 2: Fallback to Fixed UTC Offset ---
-        if (!timeCorrected) {
-             const fallbackTime = getFallbackTime(offset);
-             hour = fallbackTime.hour;
-             minute = fallbackTime.minute;
-             second = fallbackTime.second;
+        let hour = now.getHours();
+        const minute = now.getMinutes();
+        const second = now.getSeconds();
+
+        // Apply the differential offset
+        hour = (hour + hourDiff) % 24;
+        if (hour < 0) {
+            hour += 24; // Handle negative hours (e.g., Honolulu)
         }
         // ---------------------------------------------
         
