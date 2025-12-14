@@ -1,40 +1,68 @@
-// --- 1. Global Setup: All 7 Locations with Fixed UTC Offsets ---
-// These offsets are correct for Standard Time (UTC).
+// --- 1. Global Setup: All 7 Locations with Offset relative to San Francisco ---
+// Offset is the number of hours AHEAD (+) or BEHIND (-) San Francisco (PST/PDT).
 const clocks = [
-    { id: 'sf-clock', offset: -8 },      // San Francisco, CA (UTC-8)
-    { id: 'gnv-clock', offset: -5 },     // Gainesville, FL (UTC-5)
-    { id: 'shanghai-clock', offset: 8 }, // Shanghai, China (UTC+8)
-    { id: 'basel-clock', offset: 1 },    // Basel, Switzerland (UTC+1)
-    { id: 'honolulu-clock', offset: -10 }, // Honolulu, HI (UTC-10)
-    { id: 'paris-fr-clock', offset: 1 }, // Paris, France (UTC+1)
-    { id: 'paris-tx-clock', offset: -6 } // Paris, Texas (UTC-6)
+    { id: 'sf-clock', hourDiff: 0 },         // San Francisco, CA (PST)
+    { id: 'gnv-clock', hourDiff: 3 },        // Gainesville, FL (EST is 3 hours ahead)
+    { id: 'shanghai-clock', hourDiff: 16 },  // Shanghai, China (CST is 16 hours ahead)
+    { id: 'basel-clock', hourDiff: 9 },      // Basel, Switzerland (CET is 9 hours ahead)
+    { id: 'honolulu-clock', hourDiff: -2 },  // Honolulu, HI (HST is 2 hours behind)
+    { id: 'paris-fr-clock', hourDiff: 9 },   // Paris, France (CET is 9 hours ahead)
+    { id: 'paris-tx-clock', hourDiff: 2 }    // Paris, Texas (CST is 2 hours ahead)
 ];
 
-/**
- * Calculates time using the fixed UTC offset.
- */
-function getTimeComponents(offset) {
+// --- Core Function: Get SF Time and apply difference ---
+function getSFTimeComponents(hourDiff) {
+    // 1. Get the current time in the browser's local timezone.
     const now = new Date();
     
-    // Get the current UTC time (milliseconds)
-    // getTimezoneOffset() returns minutes *difference* between UTC and local time (e.g., -480 for PST)
-    const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000); 
-
-    // Create a new date object for the target location by applying the offset
-    // Offset is in hours, converted to milliseconds (offset * 3600000)
-    const targetTimeMs = utcTime + (offset * 3600000);
-    const targetDate = new Date(targetTimeMs);
+    // 2. Determine the San Francisco time (PST is UTC-8, and EST is UTC-5). 
+    //    We use IANA to reliably get the SF hour, which is often more stable 
+    //    than using the local machine time for all calculations.
     
+    let sfHour = now.getHours();
+    let sfMinute = now.getMinutes();
+    let sfSecond = now.getSeconds();
+
+    // Use a single IANA call just for the SF time, which is the base.
+    try {
+        const timeFormatter = new Intl.DateTimeFormat('en-US', {
+            hour: '2-digit', minute: '2-digit', second: '2-digit',
+            hour12: false, timeZone: 'America/Los_Angeles'
+        });
+        const timeString = timeFormatter.format(now);
+        const parts = timeString.match(/(\d{2})[^\d](\d{2})[^\d](\d{2})/);
+        
+        if (parts && parts.length === 4) {
+            sfHour = parseInt(parts[1], 10);
+            sfMinute = parseInt(parts[2], 10);
+            sfSecond = parseInt(parts[3], 10);
+        }
+    } catch (e) {
+        // Fallback: If IANA fails, use the local machine time for SF's base
+        // (This assumes the user's browser is set to SF time, which it appears to be).
+    }
+
+    // 3. Apply the differential offset from the SF base time
+    let targetHour = sfHour + hourDiff;
+    
+    // Handle wrap-around (e.g., 23 + 3 = 26, should be 2)
+    targetHour = targetHour % 24;
+    // Handle wrap-behind (e.g., 0 - 2 = -2, should be 22)
+    if (targetHour < 0) {
+        targetHour += 24; 
+    }
+
     return {
-        hour: targetDate.getHours(),
-        minute: targetDate.getMinutes(),
-        second: targetDate.getSeconds()
+        hour: targetHour,
+        minute: sfMinute,
+        second: sfSecond
     };
 }
 
-// Draw the clock using the fixed offset data
+
+// Draw the clock using the offset data
 function drawClock(clockData) {
-    const { id, offset } = clockData;
+    const { id, hourDiff } = clockData;
     const canvas = document.getElementById(id);
     
     if (!canvas) return;
@@ -52,8 +80,8 @@ function drawClock(clockData) {
         ctx.fillStyle = "white";
         ctx.fill();
 
-        // Get reliable time components via fixed offset
-        const time = getTimeComponents(offset);
+        // Get reliable time components
+        const time = getSFTimeComponents(hourDiff);
         
         const hour = time.hour;
         const minute = time.minute;
@@ -76,7 +104,7 @@ function drawClock(clockData) {
     renderTime();
 }
 
-// Function to draw the clock face and center dot (No Change)
+// Draw Face (No Change)
 function drawFace(ctx, radius) {
     ctx.beginPath();
     ctx.arc(0, 0, radius, 0, 2 * Math.PI);
@@ -90,7 +118,7 @@ function drawFace(ctx, radius) {
     ctx.fill();
 }
 
-// Draw Numbers on the clock face (No Change)
+// Draw Numbers (No Change)
 function drawNumbers(ctx, radius) {
     let ang;
     let num;
@@ -111,7 +139,7 @@ function drawNumbers(ctx, radius) {
     }
 }
 
-// Function to draw the clock hands (No Change)
+// Draw Hands (No Change)
 function drawHand(ctx, pos, length, width, type) {
     let angle = Math.PI * (pos / 30) - (Math.PI / 2);
 
