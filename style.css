@@ -1,0 +1,48 @@
+/* --- Base Styling (Non-Layout) --- */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+.grid-item {
+    /* Visual styling for the boxes */
+    background-color: #3498db; /* A nice blue color */
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid #2980b9;
+    box-sizing: border-box; /* Ensures padding/border are inside the width */
+}
+
+/* --- 💻 Desktop Layout (Default: 5 Columns) --- */
+.grid-container {
+    display: grid;
+    /* Create 5 columns, each taking an equal fraction (fr) of the space */
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    /* Add a small gap between the columns and rows */
+    gap: 10px;
+    /* Center content and add margin on the sides */
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 10px;
+}
+
+/* --- 📱 Mobile Layout (Media Query) --- */
+/*
+  This code block applies ONLY when the screen is 
+  600 pixels wide or LESS (a common mobile breakpoint).
+*/
+@media (max-width: 600px) {
+    .grid-container {
+        /* Redefine the grid to have only 1 column */
+        /* Each item will now take up the full width */
+        grid-template-columns: 1fr;
+        gap: 5px; /* Adjust gap for mobile */
+    }
+
+    /* Optional: Make items slightly smaller on mobile */
+    .grid-item {
+        padding: 15px;
+    }
+}
