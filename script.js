@@ -9,10 +9,6 @@ const clocks = [
     { id: 'paris-tx-clock', timezone: 'America/Chicago' }       // Paris, Texas
 ];
 
-// Ensure the required library functions are available from the global namespace
-// The library links must be correct in index.html for this to work!
-const { utcToZonedTime } = dateFnsTz;
-
 // Draw the clock using the timezone string
 function drawClock(clockData) {
     const { id, timezone } = clockData;
@@ -21,31 +17,58 @@ function drawClock(clockData) {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     const radius = canvas.height / 2;
+    // Save state before translation, so canvas is properly centered
+    ctx.save(); 
     ctx.translate(radius, radius); 
 
     function renderTime() {
-        // Clear canvas
+        // Restore context state (undoes previous drawing actions but keeps translation)
+        ctx.restore();
+        ctx.save(); 
+        
+        // Clear canvas by drawing a fresh circle
         ctx.beginPath();
         ctx.arc(0, 0, radius, 0, 2 * Math.PI);
         ctx.fillStyle = "white";
         ctx.fill();
 
-        // 🌟 FIX: Use date-fns-tz for guaranteed timezone accuracy 🌟
+        // --- Reliable Time Parsing (DST-Aware) ---
         const now = new Date();
         
-        // Convert the current UTC time to the correct time object for the target timezone
-        const zonedDate = utcToZonedTime(now, timezone);
+        // Define the formatter to force 24-hour, 2-digit output
+        const timeFormatter = new Intl.DateTimeFormat('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false, 
+            timeZone: timezone
+        });
 
-        const hour = zonedDate.getHours();
-        const minute = zonedDate.getMinutes();
-        const second = zonedDate.getSeconds();
+        const timeString = timeFormatter.format(now); 
+        
+        // Use a space to split the parts, as some environments add hidden characters around the colon
+        const parts = timeString.match(/(\d{2})[^\d](\d{2})[^\d](\d{2})/);
+        
+        let hour = 0, minute = 0, second = 0;
+
+        if (parts && parts.length === 4) {
+            hour = parseInt(parts[1], 10);
+            minute = parseInt(parts[2], 10);
+            second = parseInt(parts[3], 10);
+        } else {
+             // Fallback to local time if parsing fails (prevents blank screen)
+             const localNow = new Date();
+             hour = localNow.getHours();
+             minute = localNow.getMinutes();
+             second = localNow.getSeconds();
+        }
+        // ---------------------------------------------
         
         // Draw Clock Face, Numbers, and Markers 
         drawFace(ctx, radius);
         drawNumbers(ctx, radius);
         
         // Draw Hands: 
-        // Hour Position Calculation: (Hour % 12) * 5 + (Minute / 12) * 5
         const hourPos = (hour % 12) * 5 + (minute / 12);
 
         drawHand(ctx, hourPos, radius * 0.5, radius * 0.07, 'hour'); 
