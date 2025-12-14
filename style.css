@@ -60,14 +60,38 @@ body {
         0 0 20px rgba(255, 99, 71, 0.5); /* Soft glow */
 }
 
-/* --- 5. The Fixed Neon MySpace Badge (Remains) --- */
+/* --- 5. UPDATED: Heart MYSPACE Badge Styling --- */
 #myspace-badge {
-    position: fixed; top: 20px; left: 20px; z-index: 1000; 
-    width: 100px; height: 100px; padding: 10px; border: 5px solid #fff;
-    background-color: #ff0; color: #000; font-family: 'Arial Black', sans-serif;
-    font-size: 1.5em; font-weight: 900; line-height: 80px; text-align: center;
-    box-shadow: 0 0 10px #ff0, 0 0 20px #ff0, 0 0 30px #ff0, 4px 4px 0 #e74c3c; 
-    transform: rotate(-5deg); transition: transform 0.3s ease-in-out;
+    position: fixed; 
+    top: 20px;
+    left: 20px;
+    z-index: 1000; 
+    width: 100px;
+    height: 100px;
+    padding: 10px;
+    border: 5px solid #fff;
+    
+    /* Heart Style Changes: */
+    /* Semi-opaque Red Background (50% opacity: rgba(255, 0, 0, 0.5)) */
+    background-color: rgba(255, 0, 0, 0.5); 
+    
+    /* Heart Shape: achieved by heavy top-left and bottom-right corner rounding */
+    border-radius: 50% 5px 50% 5px / 5px 50% 5px 50%;
+    
+    color: #fff; /* White text for contrast */
+    font-family: 'Arial Black', sans-serif;
+    font-size: 1.5em;
+    font-weight: 900;
+    line-height: 80px; 
+    text-align: center;
+    
+    /* Simple shadow to make it pop */
+    box-shadow: 
+        0 0 10px rgba(255, 0, 0, 0.8),  
+        0 0 20px rgba(255, 0, 0, 0.5);
+        
+    transform: rotate(-5deg);
+    transition: transform 0.3s ease-in-out;
 }
 
 #myspace-badge:hover {
@@ -75,7 +99,7 @@ body {
     transform: rotate(0deg) scale(1.05);
 }
 
-/* --- 6. Clock Styling (Updated for cleaner look) --- */
+/* --- 6. Clock Styling (Remains) --- */
 .clock-display-container {
     display: flex; 
     justify-content: center;
@@ -99,7 +123,6 @@ body {
     margin-bottom: 10px;
 }
 
-/* Clock Canvas: Cleaner Look */
 canvas {
     border: 3px solid #3b3b3b; 
     border-radius: 50%;
@@ -107,7 +130,7 @@ canvas {
 }
 
 
-/* --- 7. Mobile Responsiveness --- */
+/* --- 7. Mobile Responsiveness (Remains) --- */
 @media (max-width: 1200px) { 
     .grid-container {
         grid-template-columns: repeat(3, 1fr); 
