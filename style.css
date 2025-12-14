@@ -1,48 +1,96 @@
-/* --- Base Styling (Non-Layout) --- */
+/* --- 1. Custom Fonts (Add to HTML Head) --- */
+/* You would need to link an 80s style font in your index.html head for the best effect. 
+   Example: <link href="https://fonts.googleapis.com/css2?family=Bungee+Outline&family=Chicle&display=swap" rel="stylesheet"> 
+   I will use a standard bold font for reliability here.
+*/
+
+/* --- 2. The Background: Geometric Pattern & Bright Colors --- */
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    /* Use a repeating, contrasting background pattern for maximalist effect */
+    background-image: repeating-linear-gradient(
+        45deg, 
+        #f06, 0 5%, 
+        #0cf, 5% 10%
+    ), 
+    repeating-linear-gradient(
+        -45deg, 
+        #90f, 0 5%, 
+        #f90, 5% 10%
+    );
+    background-size: 200% 200%;
+    /* Optional: Animate the background slowly */
+    animation: background-move 10s infinite alternate;
+    font-family: 'Arial Black', sans-serif;
+}
+
+@keyframes background-move {
+    from {background-position: 0% 0%;}
+    to {background-position: 100% 100%;}
+}
+
+/* --- 3. The Grid Items: Wavy Border & 80s Styling --- */
+
+/* Reset for the wavy border effect */
+.grid-container {
+    padding-top: 50px; /* Space for the header */
 }
 
 .grid-item {
-    /* Visual styling for the boxes */
-    background-color: #3498db; /* A nice blue color */
-    color: white;
-    padding: 20px;
+    /* Basic Look */
+    background-color: #34495e; /* Darker base color for contrast */
+    color: #fff;
+    padding: 30px 20px;
     text-align: center;
-    border: 1px solid #2980b9;
-    box-sizing: border-box; /* Ensures padding/border are inside the width */
+    box-sizing: border-box;
+    /* Typography */
+    font-size: 2em;
+    font-weight: 900;
+    text-shadow: 4px 4px #e74c3c; /* 80s chunky text shadow */
+    
+    /* Wavy Border (The Magic Part!) */
+    border: none;
+    border-radius: 50% 10% 50% 10% / 10% 50% 10% 50%; /* Creates the wavy/squishy shape */
+    box-shadow: 
+        0 0 0 10px #f0f,  /* Neon Pink Outer Border */
+        0 0 0 20px #0ff;  /* Neon Cyan Inner Border */
+        
+    /* Transition for the Hover Effect */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-/* --- 💻 Desktop Layout (Default: 5 Columns) --- */
+/* --- 4. The Hover Effect: Zoom, Rotate, and Glow --- */
+.grid-item:hover {
+    cursor: pointer;
+    /* Zoom in slightly and rotate for a dynamic, jarring effect */
+    transform: scale(1.1) rotate(2deg);
+    /* Make the shadow more intense, like a neon glow */
+    box-shadow: 
+        0 0 0 10px #f0f,
+        0 0 0 20px #0ff,
+        0 0 40px rgba(255, 0, 255, 0.8), /* Strong neon pink glow */
+        0 0 40px rgba(0, 255, 255, 0.8); /* Strong neon cyan glow */
+}
+
+/* --- 5. Responsiveness (from previous code) --- */
 .grid-container {
     display: grid;
-    /* Create 5 columns, each taking an equal fraction (fr) of the space */
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    /* Add a small gap between the columns and rows */
-    gap: 10px;
-    /* Center content and add margin on the sides */
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 0 10px;
+    grid-template-columns: repeat(5, 1fr); /* Simplified 5-column syntax */
+    gap: 25px; /* Larger gap for dramatic spacing */
+    max-width: 1400px;
+    margin: 50px auto; /* Adjust top margin to account for padding */
+    padding: 0 20px;
 }
 
-/* --- 📱 Mobile Layout (Media Query) --- */
-/*
-  This code block applies ONLY when the screen is 
-  600 pixels wide or LESS (a common mobile breakpoint).
-*/
-@media (max-width: 600px) {
+@media (max-width: 800px) { /* Changed breakpoint to make 5-column last longer */
     .grid-container {
-        /* Redefine the grid to have only 1 column */
-        /* Each item will now take up the full width */
-        grid-template-columns: 1fr;
-        gap: 5px; /* Adjust gap for mobile */
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets/small screens */
+        gap: 15px;
     }
+}
 
-    /* Optional: Make items slightly smaller on mobile */
-    .grid-item {
-        padding: 15px;
+@media (max-width: 500px) {
+    .grid-container {
+        grid-template-columns: 1fr; /* 1 column on phones */
     }
 }
