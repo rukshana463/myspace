@@ -9,7 +9,8 @@ const clocks = [
     { id: 'paris-tx-clock', timezone: 'America/Chicago' }       // Paris, Texas
 ];
 
-// Destructure the required library functions from the global namespace (dateFnsTz)
+// Ensure the required library functions are available from the global namespace
+// The library links must be correct in index.html for this to work!
 const { utcToZonedTime } = dateFnsTz;
 
 // Draw the clock using the timezone string
