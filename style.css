@@ -42,7 +42,7 @@ body {
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-/* New: Styling for the Peanuts images */
+/* Styling for the Peanuts images */
 .peanuts-img {
     width: 80%;
     max-height: 70%;
@@ -79,12 +79,12 @@ body {
 .clock-display-container {
     display: flex; 
     justify-content: center;
-    flex-wrap: wrap; /* Allows clocks to wrap to the next line */
+    flex-wrap: wrap; 
     gap: 30px;
     padding: 40px 20px;
     margin-top: 50px;
     background-color: rgba(255, 255, 255, 0.9); 
-    border-top: 5px solid #ccc; /* Soft border */
+    border-top: 5px solid #ccc; 
 }
 
 .clock-wrapper {
@@ -101,9 +101,9 @@ body {
 
 /* Clock Canvas: Cleaner Look */
 canvas {
-    border: 3px solid #3b3b3b; /* Simple dark border */
+    border: 3px solid #3b3b3b; 
     border-radius: 50%;
-    box-shadow: none; /* Removed neon glow */
+    box-shadow: none; 
 }
 
 
