@@ -18,6 +18,11 @@ body {
 }
 
 /* --- 3. The Grid Items: Wavy Border & Peanuts Look --- */
+.grid-container a.grid-item {
+    text-decoration: none; /* Remove underline from links */
+    color: inherit; /* Maintain dark text color */
+}
+
 .grid-item {
     background-color: #f7e6e5; /* A light, muted pink */
     color: #3b3b3b; /* Darker text */
@@ -25,6 +30,9 @@ body {
     height: 180px; 
     text-align: center;
     box-sizing: border-box;
+    
+    /* Display: inline-block is important for the anchor tag to fill the grid space */
+    display: inline-block; 
     
     /* Typography */
     font-size: 1.2em; 
@@ -119,44 +127,3 @@ body {
 }
 
 .clock-wrapper h3 {
-    text-shadow: none;
-    font-size: 0.9em;
-    margin-bottom: 10px;
-}
-
-canvas {
-    border: 3px solid #3b3b3b; 
-    border-radius: 50%;
-    box-shadow: none; 
-}
-
-
-/* --- 7. Mobile Responsiveness --- */
-@media (max-width: 1200px) { 
-    .grid-container {
-        grid-template-columns: repeat(3, 1fr); 
-    }
-}
-
-@media (max-width: 768px) { 
-    .grid-container {
-        grid-template-columns: repeat(2, 1fr); 
-    }
-    .clock-display-container {
-        gap: 20px;
-    }
-}
-
-@media (max-width: 500px) {
-    .grid-container {
-        grid-template-columns: 1fr; 
-        padding-top: 150px; 
-    }
-    .grid-item {
-        font-size: 1.2em;
-        height: 150px;
-    }
-    .peanuts-img {
-        max-height: 60%;
-    }
-}
