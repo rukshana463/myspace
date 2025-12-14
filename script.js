@@ -3,10 +3,10 @@ const clocks = [
     { id: 'sf-clock', timezone: 'America/Los_Angeles' },        // San Francisco, CA
     { id: 'gnv-clock', timezone: 'America/New_York' },          // Gainesville, FL
     { id: 'shanghai-clock', timezone: 'Asia/Shanghai' },        // Shanghai, China
-    { id: 'basel-clock', timezone: 'Europe/Zurich' },           // Basel, Switzerland (Zurich is the official zone)
+    { id: 'basel-clock', timezone: 'Europe/Zurich' },           // Basel, Switzerland
     { id: 'honolulu-clock', timezone: 'Pacific/Honolulu' },     // Honolulu, HI
     { id: 'paris-fr-clock', timezone: 'Europe/Paris' },         // Paris, France
-    { id: 'paris-tx-clock', timezone: 'America/Chicago' }       // Paris, Texas (America/Chicago covers Central Time)
+    { id: 'paris-tx-clock', timezone: 'America/Chicago' }       // Paris, Texas
 ];
 
 // Draw the clock using the timezone string
@@ -26,35 +26,36 @@ function drawClock(clockData) {
         ctx.fillStyle = "white";
         ctx.fill();
 
-        // Use Intl.DateTimeFormat to reliably get H, M, S for the specified time zone
+        // 🌟 FIX: Use toLocaleString and Regex for the most robust parsing 🌟
         const now = new Date();
         
-        // Use toLocaleTimeString for a single reliable string that includes DST adjustment
         const timeOptions = {
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric',
-            hour12: false, // Ensure 24-hour format
+            hour: '2-digit',      // Ensure 2-digit format for reliability
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,        // Ensure 24-hour format
             timeZone: timezone
         };
         
+        // Get the time string in the target timezone
         const timeString = now.toLocaleTimeString('en-US', timeOptions);
         
-        // Safely parse the time string (e.g., "14:30:15")
-        const [hourStr, minuteStr, secondStr] = timeString.split(':');
+        // Use a regular expression to safely extract the three number groups
+        const match = timeString.match(/(\d{2}):(\d{2}):(\d{2})/);
         
-        const hour = parseInt(hourStr, 10);
-        const minute = parseInt(minuteStr, 10);
-        const second = parseInt(secondStr, 10);
+        let hour, minute, second;
 
-        // Check if parsing failed (resulting in NaN). If so, stop rendering.
-        if (isNaN(hour) || isNaN(minute) || isNaN(second)) {
-            console.error(`Failed to parse time for ${timezone}. Result: ${timeString}`);
-            // Draw face but skip hands to prevent errors
-            drawFace(ctx, radius);
-            drawNumbers(ctx, radius);
-            requestAnimationFrame(renderTime);
-            return; 
+        if (match) {
+            hour = parseInt(match[1], 10);
+            minute = parseInt(match[2], 10);
+            second = parseInt(match[3], 10);
+        } else {
+            // Fallback for extreme compatibility: Try to get the local time
+            // This is safer than stopping the rendering, but won't be timezone correct
+            const localNow = new Date();
+            hour = localNow.getHours();
+            minute = localNow.getMinutes();
+            second = localNow.getSeconds();
         }
 
         // Draw Clock Face, Numbers, and Markers (functions remain unchanged)
@@ -69,13 +70,12 @@ function drawClock(clockData) {
         drawHand(ctx, minute, radius * 0.8, radius * 0.07, 'minute'); 
         drawHand(ctx, second, radius * 0.9, radius * 0.02, 'second'); 
         
+        // Use requestAnimationFrame for smoother animation than setInterval
         requestAnimationFrame(renderTime);
     }
     
     renderTime();
 }
-
-// (The rest of the helper functions: drawFace, drawNumbers, drawHand are unchanged)
 
 // Function to draw the clock face and center dot (No Change)
 function drawFace(ctx, radius) {
@@ -134,7 +134,6 @@ function drawHand(ctx, pos, length, width, type) {
     ctx.stroke();
     ctx.rotate(-angle); 
 }
-
 
 // --- 4. Initialization ---
 clocks.forEach(clock => {
