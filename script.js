@@ -9,6 +9,9 @@ const clocks = [
     { id: 'paris-tx-clock', timezone: 'America/Chicago' }       // Paris, Texas
 ];
 
+// Destructure the required library functions from the global namespace (dateFnsTz)
+const { utcToZonedTime } = dateFnsTz;
+
 // Draw the clock using the timezone string
 function drawClock(clockData) {
     const { id, timezone } = clockData;
@@ -26,39 +29,17 @@ function drawClock(clockData) {
         ctx.fillStyle = "white";
         ctx.fill();
 
-        // 🌟 FIX: Use toLocaleString and Regex for the most robust parsing 🌟
+        // 🌟 FIX: Use date-fns-tz for guaranteed timezone accuracy 🌟
         const now = new Date();
         
-        const timeOptions = {
-            hour: '2-digit',      // Ensure 2-digit format for reliability
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false,        // Ensure 24-hour format
-            timeZone: timezone
-        };
-        
-        // Get the time string in the target timezone
-        const timeString = now.toLocaleTimeString('en-US', timeOptions);
-        
-        // Use a regular expression to safely extract the three number groups
-        const match = timeString.match(/(\d{2}):(\d{2}):(\d{2})/);
-        
-        let hour, minute, second;
+        // Convert the current UTC time to the correct time object for the target timezone
+        const zonedDate = utcToZonedTime(now, timezone);
 
-        if (match) {
-            hour = parseInt(match[1], 10);
-            minute = parseInt(match[2], 10);
-            second = parseInt(match[3], 10);
-        } else {
-            // Fallback for extreme compatibility: Try to get the local time
-            // This is safer than stopping the rendering, but won't be timezone correct
-            const localNow = new Date();
-            hour = localNow.getHours();
-            minute = localNow.getMinutes();
-            second = localNow.getSeconds();
-        }
-
-        // Draw Clock Face, Numbers, and Markers (functions remain unchanged)
+        const hour = zonedDate.getHours();
+        const minute = zonedDate.getMinutes();
+        const second = zonedDate.getSeconds();
+        
+        // Draw Clock Face, Numbers, and Markers 
         drawFace(ctx, radius);
         drawNumbers(ctx, radius);
         
@@ -70,7 +51,6 @@ function drawClock(clockData) {
         drawHand(ctx, minute, radius * 0.8, radius * 0.07, 'minute'); 
         drawHand(ctx, second, radius * 0.9, radius * 0.02, 'second'); 
         
-        // Use requestAnimationFrame for smoother animation than setInterval
         requestAnimationFrame(renderTime);
     }
     
