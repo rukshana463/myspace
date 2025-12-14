@@ -1,20 +1,41 @@
-// --- 1. Global Setup: All 7 Locations with Offset relative to San Francisco (America/Los_Angeles) ---
-// Since SF is UTC-8 (PST), the offset is (Target UTC Offset) - (-8).
-// For Paris, TX (CST, UTC-6): -6 - (-8) = +2 hours ahead of SF.
+// --- 1. Global Setup: All 7 Locations with Fixed UTC Offsets ---
+// Note: Offset is in hours, relative to UTC (e.g., -8 for San Francisco).
+// These offsets are correct for Standard Time (December).
 const clocks = [
-    { id: 'sf-clock', hourDiff: 0 },         // San Francisco, CA (Reference point)
-    { id: 'gnv-clock', hourDiff: 3 },        // Gainesville, FL (EST is 3 hours ahead of PST)
-    { id: 'shanghai-clock', hourDiff: 16 },  // Shanghai, China (PST is UTC-8; CST is UTC+8. Difference is 16 hours)
-    { id: 'basel-clock', hourDiff: 9 },      // Basel, Switzerland (CET is 9 hours ahead of PST)
-    { id: 'honolulu-clock', hourDiff: -2 },  // Honolulu, HI (HST is 2 hours behind PST)
-    { id: 'paris-fr-clock', hourDiff: 9 },   // Paris, France (CET is 9 hours ahead of PST)
-    { id: 'paris-tx-clock', hourDiff: 2 }    // Paris, Texas (CST is 2 hours ahead of PST)
+    { id: 'sf-clock', offset: -8 },      // San Francisco, CA (UTC-8)
+    { id: 'gnv-clock', offset: -5 },     // Gainesville, FL (UTC-5)
+    { id: 'shanghai-clock', offset: 8 }, // Shanghai, China (UTC+8)
+    { id: 'basel-clock', offset: 1 },    // Basel, Switzerland (UTC+1)
+    { id: 'honolulu-clock', offset: -10 }, // Honolulu, HI (UTC-10)
+    { id: 'paris-fr-clock', offset: 1 }, // Paris, France (UTC+1)
+    { id: 'paris-tx-clock', offset: -6 } // Paris, Texas (UTC-6)
 ];
 
+/**
+ * Calculates time using the fixed UTC offset.
+ */
+function getTimeComponents(offset) {
+    const now = new Date();
+    
+    // Get the current UTC time (milliseconds)
+    // getTimezoneOffset() returns minutes *difference* between UTC and local time (e.g., -480 for PST)
+    const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000); 
 
-// Draw the clock using the simple arithmetic difference from local time
+    // Create a new date object for the target location by applying the offset
+    // Offset is in hours, converted to milliseconds (offset * 3600000)
+    const targetTimeMs = utcTime + (offset * 3600000);
+    const targetDate = new Date(targetTimeMs);
+    
+    return {
+        hour: targetDate.getHours(),
+        minute: targetDate.getMinutes(),
+        second: targetDate.getSeconds()
+    };
+}
+
+// Draw the clock using the fixed offset data
 function drawClock(clockData) {
-    const { id, hourDiff } = clockData;
+    const { id, offset } = clockData;
     const canvas = document.getElementById(id);
     
     if (!canvas) return;
@@ -32,19 +53,12 @@ function drawClock(clockData) {
         ctx.fillStyle = "white";
         ctx.fill();
 
-        // --- FINAL FIX: Arithmetic Difference from Local Time ---
-        const now = new Date();
+        // Get reliable time components via fixed offset
+        const time = getTimeComponents(offset);
         
-        let hour = now.getHours();
-        const minute = now.getMinutes();
-        const second = now.getSeconds();
-
-        // Apply the differential offset
-        hour = (hour + hourDiff) % 24;
-        if (hour < 0) {
-            hour += 24; // Handle negative hours (e.g., Honolulu)
-        }
-        // ---------------------------------------------
+        const hour = time.hour;
+        const minute = time.minute;
+        const second = time.second;
         
         // Draw Clock Face, Numbers, and Markers 
         drawFace(ctx, radius);
